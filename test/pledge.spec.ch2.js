@@ -121,13 +121,13 @@ describe('A promise', function(){
   // But what if events occur in opposite order?
   describe('that already has a success handler', function(){
 
-    xit('calls that handler when resolved', function(){
+    it('calls that handler when resolved', function(){
       promiseForNum.then( setFoo10 );
       numDeferral.resolve();
       expect( setFoo10 ).toHaveBeenCalled();
     });
 
-    xit('calls all its success handlers in order one time when resolved', function(){
+    it('calls all its success handlers in order one time when resolved', function(){
       promiseForNum.then( setFoo10 );
       promiseForNum.then( addToFoo );
       numDeferral.resolve( 25 );

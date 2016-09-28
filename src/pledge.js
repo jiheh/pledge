@@ -13,6 +13,7 @@ $Promise.prototype.then = function(resolve, reject) {
 		successCb: null,
 		errorCb: null
 	};
+
 	if(typeof resolve === 'function'){
 		_handler.successCb = resolve;
 	}
@@ -28,7 +29,10 @@ $Promise.prototype.callHandlers = function (){
 	if(this._state === 'resolved'){
 		this._handlerGroups.shift().successCb(this._value);
 	} else if(this._state === 'rejected'){
-		this._handlerGroups.shift().errorCb();
+		var passedReject = this._handlerGroups.shift().errorCb;
+		if (passedReject) {
+			passedReject(this._value);
+		}
 	}
 }
 
@@ -42,6 +46,10 @@ Deferral.prototype.resolve = function(data) {
 		this.$promise._state = 'resolved';
 		this.$promise._value = data;
 	}
+
+	while (this.$promise._handlerGroups.length > 0) {
+		this.$promise.callHandlers();
+	}
 };
 
 Deferral.prototype.reject = function(myReason) {
@@ -49,6 +57,10 @@ Deferral.prototype.reject = function(myReason) {
 		this.$promise._state = 'rejected';
 		this.$promise._value = myReason;
 	}
+
+	while (this.$promise._handlerGroups.length > 0) {
+		this.$promise.callHandlers();
+	}	
 };
 
 function defer() {
