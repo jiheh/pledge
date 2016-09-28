@@ -18,35 +18,54 @@ $Promise.prototype.then = function(resolve, reject) {
 		downstream: newPromise
 	};
 
-	if(typeof resolve === 'function'){
+	if (typeof resolve === 'function'){
 		_handler.successCb = resolve;
 	}
-	if(typeof reject === 'function'){
+	if (typeof reject === 'function'){
 		_handler.errorCb = reject;
 	}
-	this._handlerGroups.push(_handler)
+
+	this._handlerGroups.push(_handler);
 
 	this.callHandlers();
-	if(resolve !== null) return newPromise.$promise;
 
+	if (resolve !== null) return newPromise.$promise;
+	// if (resolve === null) {
+	// 	newPromise.$promise._value = reject();
+	// 	newPromise.$promise._state = 'resolved';
+	// }
 	// returns the promise of the new deferral
-
 };
 
 $Promise.prototype.callHandlers = function (){
-	if(this._state === 'resolved'){
-		this._handlerGroups.shift().successCb(this._value);
-	} else if(this._state === 'rejected'){
-		var passedReject = this._handlerGroups.shift().errorCb;
-		if (passedReject) {
-			passedReject(this._value);
+	var currentHandler;
+
+	if (this._state === 'resolved'){
+		currentHandler = this._handlerGroups.shift();
+
+		if (currentHandler.downstream && !currentHandler.successCb) {
+			currentHandler.downstream.resolve(this._value);
+		} else if (currentHandler.downstream) {
+			currentHandler.downstream.resolve(currentHandler.successCb(this._value));
+		} else {
+			currentHandler.successCb(this._value);
+		}
+
+	} else if (this._state === 'rejected'){
+		currentHandler = this._handlerGroups.shift();
+
+		if (currentHandler.downstream && !currentHandler.errorCb) {
+			currentHandler.downstream.reject(this._value);
+		} else {
+			currentHandler.errorCb(this._value);
 		}
 	}
-}
+
+};
 
 $Promise.prototype.catch = function(errFn){
 	this.then(null, errFn);
-}
+};
 
 
 function Deferral() {
@@ -78,9 +97,6 @@ Deferral.prototype.reject = function(myReason) {
 function defer() {
 	return new Deferral;
 }
-
-
-
 
 
 /*-------------------------------------------------------
