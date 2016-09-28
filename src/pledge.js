@@ -9,13 +9,14 @@ function $Promise() {
 }
 
 $Promise.prototype.then = function(resolve, reject) {
+
+	var newPromise = defer();
+
 	var _handler = {
 		successCb: null,
-		errorCb: null
+		errorCb: null,
+		downstream: newPromise
 	};
-
-	// var newPromise = defer();
-
 
 	if(typeof resolve === 'function'){
 		_handler.successCb = resolve;
@@ -26,6 +27,7 @@ $Promise.prototype.then = function(resolve, reject) {
 	this._handlerGroups.push(_handler)
 
 	this.callHandlers();
+	if(resolve !== null) return newPromise.$promise;
 
 	// returns the promise of the new deferral
 
