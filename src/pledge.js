@@ -14,6 +14,9 @@ $Promise.prototype.then = function(resolve, reject) {
 		errorCb: null
 	};
 
+	// var newPromise = defer();
+
+
 	if(typeof resolve === 'function'){
 		_handler.successCb = resolve;
 	}
@@ -23,6 +26,9 @@ $Promise.prototype.then = function(resolve, reject) {
 	this._handlerGroups.push(_handler)
 
 	this.callHandlers();
+
+	// returns the promise of the new deferral
+
 };
 
 $Promise.prototype.callHandlers = function (){
@@ -34,6 +40,10 @@ $Promise.prototype.callHandlers = function (){
 			passedReject(this._value);
 		}
 	}
+}
+
+$Promise.prototype.catch = function(errFn){
+	this.then(null, errFn);
 }
 
 
@@ -60,7 +70,7 @@ Deferral.prototype.reject = function(myReason) {
 
 	while (this.$promise._handlerGroups.length > 0) {
 		this.$promise.callHandlers();
-	}	
+	}
 };
 
 function defer() {

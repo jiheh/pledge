@@ -37,7 +37,7 @@ describe('For a given promiseA (pA)', function(){
   function thisReturnsHi () { return 'hi'; }
   function thisThrowsErr () { throw 'err'; }
 
-  xit('.then adds a new deferral to its handler group', function(){
+  it('.then adds a new deferral to its handler group', function(){
     promiseA.then();
     expect( promiseA._handlerGroups[0].downstream instanceof Deferral ).toBe( true );
     // each handler group has its own downstream

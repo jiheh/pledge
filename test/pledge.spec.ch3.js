@@ -96,13 +96,13 @@ describe('Another promise', function(){
 
     var theReason = { code: 'unauthorized' };
 
-    xit('calls that handler when rejected', function(){
+    it('calls that handler when rejected', function(){
       promiseForThing.then( null, logInput );
       thingDeferral.reject( theReason );
       expect( logInput ).toHaveBeenCalledWith( theReason );
     });
 
-    xit('calls all its error handlers in order one time when rejected', function(){
+    it('calls all its error handlers in order one time when rejected', function(){
       promiseForThing.then( null, logInput );
       promiseForThing.then( null, logOops );
       thingDeferral.reject( theReason );
@@ -132,18 +132,18 @@ describe('Another promise', function(){
     });
 
     // Demonstration — the next two specs should pass already
-    xit('can do stuff with resolved data', function(){
+    it('can do stuff with resolved data', function(){
       thingDeferral.resolve({ animal: 'duckling' });
       expect( ui.animals[2] ).toBe( 'duckling' );
     });
 
-    xit('can deal with rejection reasons', function(){
+    it('can deal with rejection reasons', function(){
       thingDeferral.reject({ message: 'unauthorized' });
       expect( ui.warning ).toBe( 'unauthorized' );
     });
 
     // Optional but recommended garbage collection
-    xit('discards handlers that are no longer needed', function(){
+    it('discards handlers that are no longer needed', function(){
       thingDeferral.resolve({ animal: 'chipmunk' });
       expect( promiseForThing._handlerGroups ).toEqual( [] );
     });
@@ -165,7 +165,7 @@ describe("A promise's .catch(errorFn) method", function(){
   });
   function myFunc (reason) { console.log(reason); }
 
-  xit('attaches errorFn as an error handler', function(){
+  it('attaches errorFn as an error handler', function(){
     promise.catch( myFunc );
     expect( promise.then ).toHaveBeenCalledWith( null, myFunc );
   });
@@ -174,7 +174,7 @@ describe("A promise's .catch(errorFn) method", function(){
   by default all functions return `undefined`. However, as you start
   Ch. 4, this may fail. If that happens, you will have to return here
   and fix `.catch` — this time, taking the Ch. 4 specs into account. */
-  xit('returns the same kind of thing that .then would', function(){
+  it('returns the same kind of thing that .then would', function(){
     var catchReturn = promise.catch( myFunc );
     var thenReturn = promise.then( null, myFunc );
     // should be very similar (but are not necessarily ===):
