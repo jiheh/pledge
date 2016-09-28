@@ -2,8 +2,32 @@
 /*----------------------------------------------------------------
 Promises Workshop: build the pledge.js deferral-style promise library
 ----------------------------------------------------------------*/
-// YOUR CODE HERE:
+function $Promise() {
+	this._state = 'pending';
+	this._value = null;
+}
 
+function Deferral() {
+	this.$promise = new $Promise;
+}
+
+Deferral.prototype.resolve = function(data) {
+	if (this.$promise._state === 'pending') {
+		this.$promise._state = 'resolved';
+		this.$promise._value = data;
+	}
+};
+
+Deferral.prototype.reject = function(myReason) {
+	if (this.$promise._state === 'pending') {
+		this.$promise._state = 'rejected';
+		this.$promise._value = myReason;
+	}
+};
+
+function defer() {
+	return new Deferral;
+}
 
 
 
